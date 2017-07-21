@@ -92,6 +92,14 @@ publishing {
                 // the Gradle ANTLR plugin. `1ac98bf` can be reverted and this comment removed once
                 // that issue is fixed and Gradle upgraded. See https://goo.gl/L92KiF and https://goo.gl/FY0PVR.
                 Node pomNode = asNode()
+
+                asNode().dependencies.'*'.findAll() {
+                    it.scope.text() == 'runtime' && project.configurations.compile.allDependencies.find { dep ->
+                        dep.name == it.artifactId.text()
+                    }
+                }.each() {
+                    it.scope*.value = 'compile'
+                }
                 pomNode.dependencies.'*'.findAll() {
                     it.artifactId.text() == 'antlr4'
                 }.each() {
